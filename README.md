@@ -1,4 +1,3 @@
-Submitted by: Mashael Alotaibi — academy: @SDAIAAcademy
 
 Submitted by: Mashael Alotaibi — academy: @SDAIAAcademy
 
