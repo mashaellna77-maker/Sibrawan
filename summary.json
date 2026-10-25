@@ -1,0 +1,21 @@
+{
+  "chosen": "AutoETS",
+  "recommendation": "Use AutoETS provisionally for synthetic next-quarter capacity planning: rolling scaled CRPS 0.435, with observed 80% coverage 91.7%.",
+  "data_sha256": "240acf974b7111616db5559ae0a56d5ac2efefbf20013a28d83298a3f732b026",
+  "trend_strength": 0.8101760534527432,
+  "seasonal_strength": 0.6188254399380149,
+  "acf12": 0.49441599226256017,
+  "acf24": 0.15729026469268728,
+  "floor_read": "mean=10.07 (under-predicts on average), ACF(1)=-0.073, ACF(12)=-0.370; descriptive 95% reference +/-0.253; lag 1 is inside the approximate reference; lag 12 is outside the approximate reference",
+  "residuals": {
+    "SeasonalNaive": "mean=10.29 (under-predicts on average), ACF(1)=0.001, ACF(12)=-0.318; descriptive 95% reference +/-0.400; lag 1 is inside the approximate reference; lag 12 is inside the approximate reference",
+    "AutoETS": "mean=-1.24 (over-predicts on average), ACF(1)=0.134, ACF(12)=-0.129; descriptive 95% reference +/-0.400; lag 1 is inside the approximate reference; lag 12 is inside the approximate reference"
+  },
+  "comparisons": [
+    "AutoARIMA: MASE 0.677 vs floor 1.078 (wins); scaled CRPS 0.507 vs 0.768 (wins); 80% coverage 79.2%, width 28.8; point wins in folds [1, 2, 3, 4, 5, 6, 7], losses [8]; distribution wins [1, 2, 3, 4, 5, 6, 7], losses [8].",
+    "AutoETS: MASE 0.538 vs floor 1.078 (wins); scaled CRPS 0.435 vs 0.768 (wins); 80% coverage 91.7%, width 31.3; point wins in folds [1, 2, 3, 4, 5, 6, 7, 8], losses []; distribution wins [1, 2, 3, 4, 5, 6, 7, 8], losses [].",
+    "AutoTheta: MASE 0.772 vs floor 1.078 (wins); scaled CRPS 0.550 vs 0.768 (wins); 80% coverage 83.3%, width 30.1; point wins in folds [1, 2, 3, 6, 7, 8], losses [4, 5]; distribution wins [1, 2, 3, 6, 7, 8], losses [4, 5].",
+    "Naive: MASE 0.945 vs floor 1.078 (wins); scaled CRPS 0.717 vs 0.768 (wins); 80% coverage 91.7%, width 59.9; point wins in folds [2, 3, 6, 7], losses [1, 4, 5, 8]; distribution wins [2, 3, 6, 7], losses [1, 4, 5, 8]."
+  ],
+  "runtime_seconds": 24.23523849993944
+}
