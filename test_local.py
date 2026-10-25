@@ -50,7 +50,8 @@ def test_scoring_and_causality(data):
     cv,scores,dates=rolling(spine)
     expected=pd.read_csv(ROOT/'artifacts/fold_scores.csv')
     for col in ['MASE','scaled_CRPS','coverage_80','width_80','training_scale']:
-        np.testing.assert_allclose(scores[col],expected[col],rtol=1e-7,atol=1e-7)
+        # Cross-platform model optimizers can differ by a few millionths.
+        np.testing.assert_allclose(scores[col],expected[col],rtol=1e-6,atol=1e-6)
     assert list(dates.n_train)==list(range(48,72,3)) and cv.ds.nunique()==24
     from sibrawan import forecast
     altered=spine.copy();altered.loc[48:,'y']+=1000

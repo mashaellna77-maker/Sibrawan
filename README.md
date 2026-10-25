@@ -10,13 +10,13 @@ Submitted by: Mashael Alotaibi — academy: @SDAIAAcademy
 
 ## التشغيل على Colab
 
-[افتح project.ipynb في Colab](https://colab.research.google.com/github/mashaellna77-maker/international-airpassengers-project/blob/main/project.ipynb)، ثم Runtime → Run all. الخلية الثانية تنسخ **هذا الـFork** إلى `/content/sibrawan` وتثبت `requirements.txt` وتحمل CSV من النسخة نفسها؛ لا تستخدم بيانات ركاب الطيران. افتح Runtime جديدًا إذا كانت لديك نسخة قديمة من مجلد المستودع. Python 3.11–3.13؛ اختبار محلي على 3.12. تثبيت الاعتماديات يحتاج الإنترنت؛ التحليل لا يحتاج API.
+[افتح project.ipynb في Colab](https://colab.research.google.com/github/mashaellna77-maker/Sibrawan/blob/main/project.ipynb)، ثم Runtime → Run all. الخلية الثانية تنسخ **هذا المستودع** إلى `/content/sibrawan` وتثبت `requirements.txt` وتحمل CSV من النسخة نفسها؛ لا تستخدم بيانات ركاب الطيران. افتح Runtime جديدًا إذا كانت لديك نسخة قديمة من مجلد المستودع. Python 3.11–3.13؛ اختبار محلي على 3.12. تثبيت الاعتماديات يحتاج الإنترنت؛ التحليل لا يحتاج API.
 
 ## التشغيل المحلي
 
 ```powershell
-git clone https://github.com/mashaellna77-maker/international-airpassengers-project.git
-cd international-airpassengers-project
+git clone https://github.com/mashaellna77-maker/Sibrawan.git
+cd Sibrawan
 py -3.12 -m venv .venv
 .venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
@@ -76,7 +76,7 @@ StatsForecast بديل مسموح في brief/rubric، اختير لصغر الا
 
 ### إعداد Gemini
 
-انسخ `.env.example` إلى `.env` وأدخل `GEMINI_API_KEY` **هناك فقط**؛ `.gitignore` يستبعده والبيئات الافتراضية. `GEMINI_MODEL` قابل للتغيير وفق حسابك. دون مفتاح يعمل المساعد المحلي والدفتر والتحليلات. الاتصال الحي غير مختبر دون مفتاح. إرسال سؤال عند تفعيله يرسل السؤال والحالة ونتائج التجربة إلى Google؛ لا تدخل أسرارًا. يستوضح المساعد الحالة ويقترح التصعيد للفريق المختص دون الجزم باختراق أو تنفيذ تغيير.
+أنشئ ملف `.env` محليًا وأدخل فيه `GEMINI_API_KEY` و`GEMINI_MODEL` **هناك فقط**. ملفات البيئة، بما فيها `.env.example`، غير مرفقة في هذه النسخة؛ `.gitignore` يستبعده والبيئات الافتراضية. `GEMINI_MODEL` قابل للتغيير وفق حسابك. دون مفتاح يعمل المساعد المحلي والدفتر والتحليلات. الاتصال الحي غير مختبر دون مفتاح. إرسال سؤال عند تفعيله يرسل السؤال والحالة ونتائج التجربة إلى Google؛ لا تدخل أسرارًا. يستوضح المساعد الحالة ويقترح التصعيد للفريق المختص دون الجزم باختراق أو تنفيذ تغيير.
 
 الدليل يميز الرسالة عن النقر وإدخال البيانات مستندًا إلى [NIST Phishing](https://www.nist.gov/itl/smallbusinesscyber/guidance-topic/phishing) و[NIST SP 800-61r3](https://csrc.nist.gov/pubs/sp/800/61/r3/final). اتصال Gemini وفق [التوثيق الرسمي](https://ai.google.dev/gemini-api/docs/text-generation).
 

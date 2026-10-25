@@ -6,3 +6,9 @@ __pycache__/
 *.pyc
 .streamlit/secrets.toml
 .runtime/
+
+# Keep local credentials and environments out of this repository.
+.env
+.env.*
+.venv/
+venv/
