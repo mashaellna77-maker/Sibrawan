@@ -1,35 +1,36 @@
-
 Submitted by: Mashael Alotaibi — academy: @SDAIAAcademy
 
 # سِبرَوان | Sibrawan
 
-An experimental platform for analyzing monthly phishing incident counts and forecasting the following three months to support response capacity planning and identify projected shortfalls. The platform includes “Rasd,” an AI assistant that explains results and provides initial incident response guidance.
+Sibrawan is an experimental platform that forecasts monthly phishing incident counts and compares them with response capacity. It also includes Rasd, an AI assistant that explains the results and provides initial incident response guidance.
 
-The project uses simulated data for demonstration purposes. A confirmed phishing incident does not necessarily mean a successful compromise.
+The project uses simulated data. A confirmed phishing incident does not necessarily mean a successful compromise.
 
-## Project Contents
+## Project Files
 
-| File or Folder | Contents |
+| File or Folder | Purpose |
 |---|---|
-| `project.ipynb` | Analysis, modeling, and evaluation notebook with execution outputs |
-| `data/synthetic_phishing.csv` | Monthly data from January 2020 to December 2025 |
-| `generate_data.py` | Data generation using the fixed seed `20261014` |
-| `sibrawan.py` | Models, rolling-origin evaluation harness, and scoring |
-| `artifacts/` | Results tables, forecasts, and charts |
-| `report.md` and `report.pdf` | Three-page report presenting findings and recommendations |
-| `app.py` | Platform interface |
-| `assistant.py` and `gemini_client.py` | Assistant logic and language model integration |
-| `brief.md` and `rubric.md` | Project instructions and grading criteria |
+| `project.ipynb` | Analysis, model comparison, evaluation, and saved outputs |
+| `data/synthetic_phishing.csv` | 72 monthly observations, January 2020–December 2025 |
+| `generate_data.py` | Data generator with a fixed seed |
+| `sibrawan.py` | Forecasting models and rolling-origin evaluation |
+| `artifacts/` | Forecasts, evaluation results, and charts |
+| `report.md` and `report.pdf` | Three-page management report |
+| `app.py` | Streamlit interface |
+| `assistant.py` and `gemini_client.py` | Rasd assistant and language model connection |
+| `brief.md` and `rubric.md` | Course brief and assessment criteria |
 
-## Running on Colab
+## Getting Started
 
-[Open the project notebook in Colab](https://colab.research.google.com/github/mashaellna77-maker/Sibrawan/blob/main/project.ipynb), then select **Runtime → Run all**.
+### Colab
 
-The setup cell clones the repository into `/content/sibrawan` and installs dependencies from `requirements.txt`. Use a fresh session to avoid loading an outdated copy of the files.
+[Open the notebook in Colab](https://colab.research.google.com/github/mashaellna77-maker/Sibrawan/blob/main/project.ipynb) and select **Runtime → Run all**.
 
-The analysis was tested locally using Python 3.12. Installing dependencies requires an internet connection, while analysis and forecasting do not require an API key. Full execution on Colab has not yet been verified.
+The setup cell downloads the repository and installs the dependencies. Start with a fresh session to avoid using an older copy.
 
-## Running Locally
+The analysis has been tested locally with Python 3.12. Full execution on Colab has not yet been verified. Forecasting does not require an API key.
+
+### Local Setup
 
 ```powershell
 git clone https://github.com/mashaellna77-maker/Sibrawan.git
@@ -41,13 +42,15 @@ python -m pip install jupyterlab
 jupyter lab project.ipynb
 ```
 
-Run the notebook from beginning to end to regenerate the results and report, then launch the interface:
+Run the notebook from top to bottom to regenerate the results and report.
+
+To launch the platform:
 
 ```powershell
 streamlit run app.py
 ```
 
-To execute the notebook automatically and verify the results:
+To run the notebook automatically and check the project:
 
 ```powershell
 python run_notebook.py
@@ -55,101 +58,121 @@ python verify_submission.py
 python test_local.py
 ```
 
-Test details and limitations are documented in `TESTING.md` and `LOCAL_STATUS.md`.
+See `TESTING.md` and `LOCAL_STATUS.md` for test results and known limitations.
 
-## Data and Analysis
+## Analysis
 
-The dataset contains 72 consecutive monthly observations with no missing months. Validation checks timestamp regularity, duplicates, missing values, and valid incident counts.
+The dataset contains 72 consecutive months. The notebook checks dates, missing months, duplicates, and incident counts before fitting any models.
 
-The analysis includes:
+The analysis covers:
 
-- Plotting the series and interpreting its trend and annual variation.
-- STL decomposition with a seasonal period of 12 months.
-- Calculating trend and seasonal strength.
-- Plotting the ACF and interpreting correlations at lags 12 and 24.
-- Analyzing benchmark residuals and forecast errors.
+- The historical trend and annual pattern.
+- STL decomposition with a 12-month period.
+- Trend and seasonal strength.
+- Raw-series ACF, including lags 12 and 24.
+- Seasonal Naive residuals and out-of-sample forecast errors.
 
-## Models and Evaluation
+## Forecasting and Evaluation
 
-**StatsForecast**, an alternative permitted by the project instructions, was used to fit five models:
+Five models are fitted using StatsForecast:
 
-`Naive` · `SeasonalNaive(12)` · `AutoETS` · `AutoARIMA` · `AutoTheta`
+- Naive
+- SeasonalNaive, with a 12-month seasonal period
+- AutoETS
+- AutoARIMA
+- AutoTheta
 
-The notebook explicitly shows the conversion into the required `unique_id`, `ds`, and `y` columns.
+The notebook shows how the data is converted into the `unique_id`, `ds`, and `y` columns.
 
-The comparison uses eight expanding-window tests, with a three-month forecast horizon and a three-month step. The initial training window contains 48 months, and the test windows cover the quarters of 2024 and 2025. All models use the same test dates.
+All models are evaluated on the same eight expanding windows. Each window forecasts three months, with a three-month step between origins. The first training window contains 48 months, and the tests cover 2024 and 2025.
 
-Scaling denominators are calculated using only the training data available within each window. Evaluation includes:
+The comparison includes MASE, scaled CRPS, 80% interval coverage, and average interval width. Scaling denominators use only the training history available at each origin.
 
-- MASE for point forecast error.
-- Scaled CRPS for predictive distribution performance.
-- Observed coverage of the nominal 80% prediction interval.
-- Average interval width.
-- Window-level results and comparisons against the benchmark.
+CRPS is approximated from ten quantiles using trapezoidal integration and zero endpoint losses. It is divided by the training seasonal-change scale. This differs from the original course function’s scaling and is explained in the notebook.
 
-CRPS is approximated numerically using ten quantiles and trapezoidal integration, assuming zero loss at endpoints 0 and 1, then divided by the training scaling denominator. This scaling definition differs from the original course scoring function and is documented in the notebook.
+A separate leaderboard reports two internal validation windows and a final three-month holdout. Its `score_val` and `score_test` columns use negative MASE, so values closer to zero are better. The eight rolling-origin windows provide the main evaluation evidence.
 
-The internal leaderboard uses two validation windows, followed by a separate test on the final three months. The locally defined `score_val` and `score_test` fields represent negative MASE; values closer to zero are better. This leaderboard is descriptive, while the main comparison uses all eight rolling-origin windows.
+## Results
 
-## Results and Limitations
-
-**AutoETS** was selected using the lowest average scaled CRPS among models whose observed coverage reached at least 80%.
+AutoETS was selected for its lowest average scaled CRPS among models with observed coverage of at least 80%.
 
 | Metric | AutoETS | SeasonalNaive |
 |---|---:|---:|
 | MASE | 0.538 | 1.078 |
 | Scaled CRPS | 0.435 | 0.768 |
-| Coverage of the nominal 80% interval | 91.7% | 79.2% |
-| Average interval width, in incidents | 31.3 | 42.4 |
+| Observed 80% interval coverage | 91.7% | 79.2% |
+| Average 80% interval width, in incidents | 31.3 | 42.4 |
 
-The final model was selected using the same evaluation windows, so its estimated performance may be optimistic. The notebook also presents a separate selection policy that uses only previously completed windows.
+These results come from 24 test observations. Coverage is not an accuracy percentage, and this small sample does not establish future calibration.
 
-Coverage is based on 24 test observations. It is not an accuracy percentage or a guarantee of future performance. Intervals are evaluated as produced by the models, without calibration against test outcomes or clipping negative bounds.
+The final model was selected using the same evaluation windows, which may make its reported performance optimistic. The notebook also evaluates a selection policy that uses only completed earlier windows.
 
-The final forecast covers **January–March 2026**, immediately following the end of the dataset. Forecasts may contain fractional values because they represent statistical means.
+Prediction intervals are scored without test-based calibration or clipping negative bounds.
+
+After fitting the selected model on the full dataset, the final forecasts cover **January–March 2026**. These dates follow the end of the supplied record. Fractional forecasts represent expected counts.
 
 ## Capacity Planning
 
-The interface supports a separate processing capacity for each month and calculates the shortfall at the forecast mean:
+Users can set a different response capacity for each month. The platform calculates:
 
-`shortfall = max(forecast mean − capacity, 0)`
+```text
+shortfall = max(forecast mean − capacity, 0)
+```
 
-Capacity is measured in **incidents that can be processed per month**, rather than cost or headcount. The calculated shortfall is a planning indicator, not the expected shortfall derived from the full predictive distribution.
+Capacity means the number of incidents the team can process per month. It does not represent cost or headcount.
 
-## Platform Interface
+The shortfall is calculated at the forecast mean. It is a planning measure rather than the expected shortfall across the full predictive distribution.
 
-The Arabic interface supports RTL and includes seven sections:
+## Interface
 
-Overview, Incident Analysis, Forecasts, Model Comparison, Capacity Planning, Rasd, and About the Data.
+The platform has an Arabic RTL interface with seven sections:
 
-Users can upload a CSV from the sidebar. The platform validates columns, dates, and nonnegative integer counts, accepting a continuous record of 48–600 months.
+- Overview
+- Incident Analysis
+- Forecasts
+- Model Comparison
+- Capacity Planning
+- Rasd
+- About the Data
 
-After validation, the selected model is refitted on the uploaded data, and forecasts are updated for the following three months. Displayed evaluation metrics remain associated with the original project dataset, with a notice when uploaded data is active.
+Users can upload a CSV containing 48–600 consecutive months of nonnegative integer counts. Once the file passes validation, the selected model is refitted and forecasts the next three months.
 
-Interface screenshots are available in `docs/ui-screenshots/`.
+The original evaluation metrics remain tied to the project dataset. They are not presented as evaluation results for uploaded files.
 
-## Rasd AI Assistant
+Screenshots are available in `docs/ui-screenshots/`.
 
-Rasd uses the current forecasts, capacity settings, and conversation context to explain results. It asks clarifying questions about phishing situations, suggests initial response actions, and prepares an incident summary for the security team.
+## Rasd
 
-The assistant provides local responses without an API key, with optional language model integration. Statistical forecasting models calculate the predictions; the assistant explains them and helps users interpret the results.
+Rasd explains the forecasts using the current data, capacity settings, and conversation context. It also asks clarifying questions about phishing situations, suggests initial response steps, and prepares a summary for the security team.
 
-### Configuring the Language Model Connection
+Local responses are available without an API key. A language model can be connected for generative responses. The statistical models produce the forecasts; Rasd explains them.
 
-Create a local `.env` file and add `GEMINI_API_KEY` and `GEMINI_MODEL`. Select a model available to your account.
+### Language Model Setup
 
-Environment files and API keys are not included in the repository and are excluded by `.gitignore`. When the connection is enabled, the question and its accompanying context are sent to the service provider. Do not enter confidential information.
+Create a local `.env` file containing:
 
-Initial response guidance draws on [NIST Phishing](https://www.nist.gov/itl/smallbusinesscyber/guidance-topic/phishing) and [NIST SP 800-61r3](https://csrc.nist.gov/pubs/sp/800/61/r3/final).
+```text
+GEMINI_API_KEY=your_key
+GEMINI_MODEL=your_available_model
+```
 
-## Course Requirements Coverage
+Keep this file on your device. Environment files and credentials are excluded by `.gitignore`.
 
-| Section | Implementation |
+When the connection is enabled, the question and supporting context are sent to the model provider. Do not include confidential information.
+
+Response guidance draws on [NIST Phishing](https://www.nist.gov/itl/smallbusinesscyber/guidance-topic/phishing) and [NIST SP 800-61r3](https://csrc.nist.gov/pubs/sp/800/61/r3/final).
+
+## Course Coverage
+
+| Section | Included Work |
 |---|---|
-| A — Exploration | Series plot, STL, trend and seasonal strength, and ACF with interpretation |
-| B — Benchmark | SeasonalNaive and Naive, benchmark residuals and ACF, prediction intervals, and coverage |
-| C — Modeling Framework | Explicit data conversion, five models, and a leaderboard with an explanation of scores and limitations |
-| D — Temporal Evaluation | Eight shared rolling-origin windows, error and coverage metrics, and wins and losses against the benchmark |
-| E — Report | Evidence-based recommendation, interpretation of intervals and errors, and a specific development step |
+| A — Exploration | Series plot, STL, strength measures, and ACF interpretation |
+| B — Benchmark | SeasonalNaive and Naive, benchmark residuals, intervals, and coverage |
+| C — Framework | Visible data conversion, five fitted models, and leaderboard interpretation |
+| D — Evaluation | Shared rolling origins, point and distributional scores, and benchmark comparisons |
+| E — Report | Recommendation, interval assessment, error analysis, and a specific next step |
 
-The proposed next step is to collect consistently defined real incident counts and suspicious-message volumes, then evaluate a regression model using a lagged predictor against the same benchmark. This is a proposed extension and has not been implemented in the current project.
+## Next Step
+
+Collect consistently defined real incident counts and suspicious-message volumes, then test whether lagged message volume improves forecasts against the same benchmark.
+
